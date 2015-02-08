@@ -62,20 +62,21 @@ Node Class
 
 is the attribute that defines the class name in gcc.
 
-:attribute: node_class
-:attribute_type: TextField
-:attribute_max_len: 25
-:attribute_index: True
-:attribute_unique: True
-:attribute_verbose_name: node class name
-:attribute_help_text: The node class is the base class of the node type
-:attribute_db_column: None
-:attribute_default: None
-:attribute_choices: None
-:attribute_primary_key: True
-:attribute_sequence: None
-:attribute_constraints: None
-:attribute_schema: None"""
+:name: node_class
+:db_null: False
+:db_type: CharField
+:db_max_length: 25
+:db_index: True
+:db_unique: True
+:db_verbose_name: node class name
+:db_help_text: The node class is the base class of the node type
+:db_column: None
+:db_default: None
+:db_choices: None
+:db_primary_key: True
+:db_sequence: None
+:db_constraints: None
+:db_schema: None"""
         return self._node_class
 
     def class_name(self):

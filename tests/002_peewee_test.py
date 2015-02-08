@@ -10,7 +10,7 @@ def test_klass(c, **args):
     pa = PeeWeeAdaptor()
     pc = pa.create_adaptor_class(c)
     # create an object of this
-    pprint.pprint(args)
+    #pprint.pprint(args)
     o = c(**args)
    
     # put into the db
