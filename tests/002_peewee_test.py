@@ -6,13 +6,18 @@ from Readme import TreeDefSourceFile
 from Readme import NodeBase, DefNodeClass, DefTreeCode
 from peewee_adaptor import PeeWeeAdaptor
 
+pa = PeeWeeAdaptor()
+
 def test_klass(c, **args):
-    pa = PeeWeeAdaptor()
+
     pc = pa.create_adaptor_class(c)
+
+    pa.db.create_tables([pc._model_class], safe=True)
+
     # create an object of this
     #pprint.pprint(args)
     o = c(**args)
-   
+    
     # put into the db
     pc.append(o)
     
@@ -48,6 +53,9 @@ def python_node_classes_test():
 
 
 if __name__ == '__main__':
+    pa.database()
+    pa.db.connect()
+    
     python_base_classes_test()
     python_node_classes_test()
     python_classes_test()

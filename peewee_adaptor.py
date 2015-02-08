@@ -12,6 +12,7 @@ from docutils.core import publish_doctree
 import docutils.nodes
 #import xml.etree.ElementTree as etree
 from python_class_gen import PythonClassGen
+from peewee import SqliteDatabase
 
 class PeeWeeFieldAdaptor :
     def __init__(self, source_property,
@@ -95,7 +96,7 @@ class PeeWeeAdaptor :
     def __init__(self):
         self.db = None
 
-    def database():
+    def database(self):
         self.db = SqliteDatabase('example.db')
 
     def create_adaptor_field(self, classobj, prop):
