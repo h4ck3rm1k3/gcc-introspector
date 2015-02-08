@@ -57,22 +57,25 @@ class DefNodeClass(PythonClassGen):
 
     @property
     def node_class(self):
-        """..  :py:attribute:node_class
-        :py:attribute_type:TextField
-        :py:attribute_max_len:25
-        :py:attribute_index:True
-        :py:attribute_unique:True
-        :py:attribute_verbose_name:node class name
-        :py:attribute_help_text:The node class is the base class of the node type
-        :py:attribute_db_column:None
-        :py:attribute_default:None
-        :py:attribute_choices:None
-        :py:attribute_primary_key:True
-        :py:attribute_sequence:None,
-        :py:attribute_constraints:None
-        :py:attribute_schema:None
-        is the attribute that defines the class name in gcc.
         """
+Node Class
+
+is the attribute that defines the class name in gcc.
+
+:attribute: node_class
+:attribute_type: TextField
+:attribute_max_len: 25
+:attribute_index: True
+:attribute_unique: True
+:attribute_verbose_name: node class name
+:attribute_help_text: The node class is the base class of the node type
+:attribute_db_column: None
+:attribute_default: None
+:attribute_choices: None
+:attribute_primary_key: True
+:attribute_sequence: None
+:attribute_constraints: None
+:attribute_schema: None"""
         return self._node_class
 
     def class_name(self):
