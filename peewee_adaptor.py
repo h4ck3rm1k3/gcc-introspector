@@ -1,57 +1,71 @@
-
 """
 peewee adaptor
 
-takes a dynamically generated class  and turns it into a peewee database model 
+takes a dynamically generated class  and turns it into a peewee database model
 """
 import sys
 sys.path.append('../peewee/')
 import peewee
-import pprint 
+import pprint
 from docutils.core import publish_doctree
 import docutils.nodes
 #import xml.etree.ElementTree as etree
 from python_class_gen import PythonClassGen
 from peewee import SqliteDatabase
 
+
 class PeeWeeFieldAdaptor :
+
     def __init__(self, source_property,
-                 name=False, 
+                 name=None,
                  db_type="TextField",
-                 db_null=False, 
-                 db_index=False, 
+                 db_null=False,
+                 db_index=False,
                  db_unique=False,
-                 db_verbose_name=None, 
-                 db_help_text=None, 
+                 db_verbose_name=None,
+                 db_help_text=None,
                  db_column=None,
-                 db_default=None, 
-                 db_choices=None, 
-                 db_primary_key=False, 
+                 db_default=None,
+                 db_choices=None,
+                 db_primary_key=False,
                  db_sequence=None,
-                 db_constraints=None, 
+                 db_constraints=None,
                  db_schema=None,
                  db_max_length=None,
                  ):
+
+        def doeval(x):
+            if x == 'False':
+                return False
+            if x == 'True':
+                return True
+            elif x == 'None':
+                return None
+            else:
+                return x
+
+        self._name = name
         self._source_property = source_property
         self._field_class = peewee.__dict__[db_type]
+
         self._field_obj = self._field_class(
-            null=db_null, 
-            index=db_index, 
-            unique=db_unique,
-            verbose_name=db_verbose_name, 
-            help_text=db_help_text, 
-            db_column=db_column,
-            default=db_default, 
-            choices=db_choices, 
-            primary_key=db_primary_key, 
-            sequence=db_sequence,
-            constraints=db_constraints, 
-            schema=db_schema,
-            max_length=db_max_length,
+            null=doeval(db_null),
+            index=doeval(db_index),
+            unique=doeval(db_unique),
+            verbose_name=doeval(db_verbose_name),
+            help_text=doeval(db_help_text),
+            db_column=doeval(db_column),
+            default=doeval(db_default),
+            choices=doeval(db_choices),
+            primary_key=doeval(db_primary_key),
+            sequence=doeval(db_sequence),
+            constraints=doeval(db_constraints),
+            schema=doeval(db_schema),
+            max_length=doeval(db_max_length)
         )
 
 class PeeWeeModuleClassGen(PythonClassGen):
-    def __init__(self, 
+    def __init__(self,
                  src_class_name,
                  fields):
         self._src_class_name = src_class_name
@@ -62,12 +76,21 @@ class PeeWeeModuleClassGen(PythonClassGen):
 
     def base_classes(self):
         return (peewee.Model,)
+    def create_python_class(self):
+        x = super(PeeWeeModuleClassGen,self).create_python_class()
+        for f in self._fields :
+            meta = getattr(x, '_meta')
+            #pprint.pprint(meta.fields)
+            meta.fields[f._name]=f._field_obj
+
+        return x
 
     def object_data(self):
         return {}
 
     def module_name(self):
         return "peeweedb"
+
 
     def class_doc(self):
         return "TODO"
@@ -83,8 +106,8 @@ class PeeWeeClassAdaptor :
         )
         self._model_class = class_gen.create_python_class()
         #Model
-        # now create the peewee 
-        
+        # now create the peewee
+
     def append(self,obj):
         pass
 
@@ -116,10 +139,10 @@ class PeeWeeAdaptor :
         #pprint.pprint(w.fields)
         return PeeWeeFieldAdaptor(prop, **w.fields)
 
-        
+
     def create_adaptor_class(self, classobj):
         """
-        describe the class and create a new peewee compatible adaptor class 
+        describe the class and create a new peewee compatible adaptor class
         for bidirectional communication with the original
         """
         d = classobj.__dict__
