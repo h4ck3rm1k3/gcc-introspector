@@ -37,6 +37,8 @@ def main():
         print("Route  : " + rule.rule)
         print("Methods: " + str(rule.methods) )
 
+    app.config['EXPLAIN_TEMPLATE_LOADING']=True
+
     app.debug = True
     app.run()
 
