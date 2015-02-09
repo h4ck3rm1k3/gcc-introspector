@@ -81,7 +81,8 @@ class PeeWeeModuleClassGen(PythonClassGen):
         for f in self._fields :
             meta = getattr(x, '_meta')
             #pprint.pprint(meta.fields)
-            meta.fields[f._name]=f._field_obj
+            #meta.fields[f._name]=f._field_obj
+            f._field_obj.add_to_class(x, name=f._name)
 
         return x
 

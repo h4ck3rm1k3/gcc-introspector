@@ -1,3 +1,8 @@
+webserver:
+	PYTHONPATH=.	~/experiments/introspector/p34/bin/python3 webserver.py
+
+peeweeformsd:
+	PYTHONPATH=.	~/experiments/introspector/p34/bin/python3 tests/003_peewee_form_test.py
 
 peewee:
 	PYTHONPATH=.	~/experiments/introspector/p34/bin/python3 tests/002_peewee_test.py
