@@ -32,10 +32,13 @@ def main():
         forms.append(wtf)
 
     for rule in app.url_map.iter_rules():
-        print("rule  : " + str(rule))
-        print("Endpoint  : " + rule.endpoint)
-        print("Route  : " + rule.rule)
-        print("Methods: " + str(rule.methods) )
+        #print(dir(rule))
+        #print(rule.__dict__)
+        print("Rule  : " + str(rule))
+        print("    Endpoint  : " + rule.endpoint)
+        print("    Host  : " + str(rule.host))
+        print("    Route  : " + rule.rule)
+        print("    Methods: " + str(rule.methods) )
 
     app.config['EXPLAIN_TEMPLATE_LOADING']=True
 

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Detail Node{% endblock %}
+{% block content_title %}Detail node{% endblock %}
+{% block content %}
+<ul>
+{% for field in form %}
+<li>
+{{ field.label }}
+<div class="input">
+{% if field.errors %}
+{{ field(class='invalid') }}
+{% if field.description %}<span class="help">{{ field.description|safe() }}</span>{% endif %}
+<ul class="errors">{% for error in field.errors %}<li>{{ error|e }}</li>{% endfor %}</ul>
+{% else %}
+<p>object</p>
+
+<dl>
+{% for d in obj['_data'] %}
+<dt>{{ d }}</dt>
+<dd>{{ obj['_data'][d] }}</dd>
+{% endfor %}
+</dl>
+
+{% if field.description %}<span class="help">{{ field.description|safe() }}</span>{% endif %}
+{% endif %}
+</div>
+</div>
+</li>
+{% endfor %}
+
+</ul>
+{% endblock %}

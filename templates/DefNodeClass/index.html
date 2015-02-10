@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Objects{% endblock %}
+{% block content_title %}Objects{% endblock %}
+{% block content %}
+<ul>
+{% for object in objects %}
+<li><a href="{{ url_for('detail', record_id=object.id) }}">{{ object.node_class }}</a>,
+</li>
+{% endfor %}
+</ul>
+{% endblock %}
