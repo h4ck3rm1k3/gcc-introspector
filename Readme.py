@@ -127,6 +127,15 @@ class DefTreeCode(PythonClassGen):
 class TreeDefSourceFile(object):
     """
     parser for processing the source file
+    install a method on the webserver to read in the codes
+    we also want to have a singleton of this object available, we can do that via class object
+
+    example: 
+
+    DEFTREECODE (  BLAH_NODE,     "blah_node",     tcc_exceptional, 0)
+
+    The third field is the DefNodeClass name 
+
     """
     filename= '../gcc/gcc/tree.def'
 
@@ -136,6 +145,10 @@ class TreeDefSourceFile(object):
         self._init_node_classes()
 
     def _init_node_classes(self):
+        """
+        create a DefNodeClass for each node class 
+        in the list of objects.
+        """
         for obj in self._codes:
             name = obj[2]
             if name not in self._node_classes:
@@ -150,3 +163,19 @@ class TreeDefSourceFile(object):
                               obj[1],
                               obj[2],
                               obj[3])
+
+    def populate_database(self):
+        """
+        get the DefTreeCode database class
+        and add in all the _node_classes to it.
+        """
+        
+        
+class TreeDefSourceFileApi:
+    """
+
+    singleton object for webserver interfacing
+    we dont need to manage the data in the webserver itself.
+
+    """   
+    tree_def_source =  TreeDefSourceFile()

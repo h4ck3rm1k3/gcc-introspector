@@ -2,6 +2,8 @@
 peewee adaptor
 
 takes a dynamically generated class  and turns it into a peewee database model
+using docstrings in the properties
+
 """
 import sys
 sys.path.append('../peewee/')
@@ -9,10 +11,9 @@ import peewee
 import pprint
 from docutils.core import publish_doctree
 import docutils.nodes
-#import xml.etree.ElementTree as etree
 from python_class_gen import PythonClassGen
 from peewee import SqliteDatabase
-
+import logging
 
 class PeeWeeFieldAdaptor :
 
@@ -64,6 +65,8 @@ class PeeWeeFieldAdaptor :
             max_length=doeval(db_max_length)
         )
 
+
+
 class PeeWeeModuleClassGen(PythonClassGen):
     def __init__(self,
                  src_class_name,
@@ -106,15 +109,25 @@ class PeeWeeClassAdaptor :
             fields = fields,
         )
         self._model_class = class_gen.create_python_class()
-        #Model
-        # now create the peewee
+
+
+    def install_adaptor_class(self, app):
+        """
+        allows for adding in api methods into the web server
+        we read from the doc strings.
+        """
 
     def append(self,obj):
-        pass
+        """
+        append this object to the db
+        """
+        logging.warning("TODO: {}".format(str(obj)))
+
 
 class PeeWeeAdaptor :
     """
-    create a dedicate peewee class that describes this class in a peewee like standard manner
+    create a dedicate peewee class that describes
+    this class in a peewee like standard manner
     we will use this for generated classes as well, so needs to be flexable
     """
     def __init__(self):
@@ -141,21 +154,46 @@ class PeeWeeAdaptor :
         return PeeWeeFieldAdaptor(prop, **w.fields)
 
 
-    def create_adaptor_class(self, classobj):
+    def create_adaptor_class(self, external_classobj):
         """
-        describe the class and create a new peewee compatible adaptor class
-        for bidirectional communication with the original
-        """
-        d = classobj.__dict__
-        fields = []
-        for x in d:
-            v = d[x]
-            #print ("debug",x, v)
-            if isinstance(v,property): # property
-                #print("Prop name",x,v.__doc__)
-                field = self.create_adaptor_field(classobj, v)
-                fields.append(field)
+        :param class external_classobj:
+        The class to introspect and turn into a database
 
-        pw = PeeWeeClassAdaptor(classobj,fields)
+        :type external_classobj: a python class object
+
+        :return: a new pee database adaptor for this user defined class
+        :rtype: PeeWeeClassAdaptor
+
+        Describe the external user defined class (exter
+        and create a new peewee compatible adaptor class
+        for bidirectional communication with the original class
+
+        """
+        external_class_dict = external_classobj.__dict__
+
+        # list of fields to add into the adaptor
+        fields = []
+
+        for slot_name in external_class_dict:
+            slot_value = external_class_dict[slot_name]
+
+            # we filter out the properties only for now.
+            # the idea is that properties can be easily described and
+            # they provide for an interface to get and set the data
+            # to and from the database
+
+            if isinstance(slot_value,property):
+
+                # create the field descriptor
+                field_adaptor = self.create_adaptor_field(
+                    external_classobj,
+                    slot_value)
+
+                # just make a list of them,.
+                fields.append(field_adaptor)
+
+        # constructor a db adaptor out of the properties found
+        # basically the database table
+        pw = PeeWeeClassAdaptor(external_classobj,fields)
 
         return pw

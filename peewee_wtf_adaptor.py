@@ -20,11 +20,10 @@ from flask import render_template
 from flask import redirect
 from flask import url_for
 from flask import Blueprint
-
+import logging
 from flask.globals import session, _request_ctx_stack, _app_ctx_stack, \
      current_app, request
 
-#from flask import flash needs secret
 class WTFPeeWeeAdaptor :
     """
     create routes
@@ -35,30 +34,6 @@ class WTFPeeWeeAdaptor :
         self._name = name
         self._db_class = db_class
         self._form_class = model_form(self._db_class._model_class)
-
-    # def test(self, **kwargs):
-    #     ret = "test"
-    #     appctx = _app_ctx_stack.top
-    #     reqctx = _request_ctx_stack.top
-    #     url_adapter = reqctx.url_adapter
-    #     blueprint_name = request.blueprint
-    #     endpoint = 'edit'
-    #     values={}
-    #     method="GET"
-    #     ret = ret + "<h1>rules by end</h1>" + str(
-    #         url_adapter.map._rules_by_endpoint)
-    #     ret = ret + "<h1>rules</h1>" + str(url_adapter.map._rules)
-    #     for rule in url_adapter.map._rules_by_endpoint.get(endpoint, ()):
-    #         ret = ret +"<p>RULE<p>" + str(rule)
-    #         if rule.suitable_for(values, method):
-    #             pass
-    #             #rv = rule.build(values, append_unknown)
-    #             #if rv is not None:
-    #             #    return rv
-    #     ret = ret + url_for('add')
-    #     ret = ret + url_for('edit',record_id=1)
-    #     #ret = ret + url_for('edit')
-    #     return ret
 
     def index(self):
         obj = self._db_class._model_class()
@@ -121,9 +96,12 @@ class WTFPeeWeeAdaptor :
         creates a website
         """
 
+        # delegate to the db class to allow for installing of rules into flask
+        #self._db_class.install_adaptor_class(app)
+        logging.warn('Installing {name}'.format(name=self._name))
         app.add_url_rule(
             rule = '/{name}/'.format(name=self._name),
-            endpoint="index",
+            endpoint=self._name +".index",
             view_func=self.index,
             methods=['GET']
         )
@@ -132,7 +110,7 @@ class WTFPeeWeeAdaptor :
             rule = '/{name}/<int:record_id>/'.format(
                 name=self._name
             ),
-            endpoint="edit",
+            endpoint=self._name +".edit",
             view_func=self.edit,
             methods=['GET', 'POST']
         )
@@ -141,7 +119,7 @@ class WTFPeeWeeAdaptor :
             rule = '/{name}/detail/<int:record_id>/'.format(
                 name=self._name
             ),
-            endpoint="detail",
+            endpoint=self._name +".detail",
             view_func=self.detail,
             methods=['GET', 'POST']
         )
@@ -151,19 +129,8 @@ class WTFPeeWeeAdaptor :
             rule = '/{name}/add'.format(
                 name=self._name
             ),
-            endpoint="add",
+            endpoint=self._name +".add",
             view_func=self.add,
             methods=['GET', 'POST']
         )
 
-
-        # testrule = '/{name}/test'.format(
-        #         name=self._name
-        #     )
-        # print("Rule:"+testrule)
-        # app.add_url_rule(
-        #     rule = testrule,
-        #     endpoint="test",
-        #     view_func=self.test,
-        #     methods=['GET', 'POST']
-        # )
